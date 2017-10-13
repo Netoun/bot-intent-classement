@@ -1,0 +1,20 @@
+{
+  "name": "bot-res-hello",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "watch": "webpack --progress --colors --watch --config webpack.config.js",
+    "build": "webpack --progress --colors --config webpack.config.js",
+    "start": "node dist/bundle.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.1",
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
+    "request": "^2.83.0",
+    "webpack": "^3.7.1"
+  }
+}
