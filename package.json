@@ -1,19 +1,36 @@
 {
-  "name": "bot-res-hello",
+  "name": "bot-res-classement",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
     "watch": "webpack --progress --colors --watch --config webpack.config.js",
     "build": "webpack --progress --colors --config webpack.config.js",
-    "start": "node dist/bundle.js"
+    "start": "node dist/bundle.js",
+    "test": "nyc ava"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": {
+      "presets": [
+        "es2015"
+      ]
+    }
   },
   "dependencies": {
     "amqplib": "^0.5.1",
+    "ava": "^0.22.0",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
+    "coveralls": "^3.0.0",
+    "nyc": "^11.2.1",
+    "proxyquire": "^1.8.0",
+    "rabbitmock": "^0.5.0",
     "request": "^2.83.0",
     "webpack": "^3.7.1"
   }
