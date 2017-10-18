@@ -7,8 +7,14 @@ const connexionEstablished = connexion()
 
 assertQueue(connexionEstablished, ($message) => {
 
-    if ($message.luis.entities.type.includes('!Classement'))
+    if (!$message.luis.entities || !$message.luis.entities.type)
+    {
+        const newMessage = Object.assign($message.message, { content: "Je n'ai pas réussi à trouver votre championnat" })
+        const newIntentMessage = Object.assign($message, { message: newMessage })
+        sendTo(connexionEstablished, JSON.stringify(newIntentMessage))
         return
+    }
+
 
     var fs = require('fs');
     var obj = JSON.parse(fs.readFileSync('league.json', 'utf8'));
