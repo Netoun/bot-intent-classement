@@ -5,5 +5,7 @@ import { logic } from './logic'
 const connexionEstablished = connexion()
 
 assertQueue(connexionEstablished, ($message) => {
-    sendTo(connexionEstablished, JSON.stringify(logic($message)))
+    logic($message).then(response => {
+        sendTo(connexionEstablished, JSON.stringify(response))
+    })
 })

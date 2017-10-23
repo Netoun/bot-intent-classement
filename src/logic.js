@@ -1,41 +1,45 @@
 import request from 'request'
-import fs from 'fs'
+import { league } from './league'
 
 export const logic = ($message) => {
+    return new Promise((resolve, reject) => {
 
-    const token = process.env.FOTBALL_TOKEN
+        const token = process.env.FOOT_TOKEN
 
-    if (!$message.luis.entities || !$message.luis.entities.type) {
-        const newMessage = Object.assign($message.message, { content: 'Je n\'ai pas réussi à trouver votre championnat' })
-        return Object.assign($message, { message: newMessage })
+        if (!token || !$message.luis.entities[0] || !$message.luis.entities[0].type) {
+            const newMessage = Object.assign($message.message, { content: 'Je n\'ai pas réussi à trouver votre championnat' })
+            resolve(Object.assign($message, { message: newMessage }))
 
-    }
+        }
+        console.log($message.luis.entities[0].type)
 
-    var obj = JSON.parse(fs.readFileSync('league.json', 'utf8'))
-
-    function checkNameforId(element) {
-        return element.name === $message.luis.entities.type
-    }
-
-    let idLeague = obj.league.find(checkNameforId)
-
-    var options = {
-        method: 'GET',
-        url: 'http://api.football-data.org/v1/competitions/' + idLeague.id + '/leagueTable',
-        headers: { 'X-Auth-Token': token }
-    }
-
-    request(options, function (error, response, body) {
-        if (error) throw new Error(error)
-        let jsonData = JSON.parse(body)
-        let classement = 'Voici le classement de ' + jsonData.leagueCaption + ' :  \n\n'
-        classement += jsonData.standing.reduce(function (tab, value) {
-            return tab + value.position + ' : ' + value.teamName + '   ' + value.points + '\n'
-        }, ' ')
+        const idLeague = league.find(leagues => {
+            return leagues.name === $message.luis.entities[0].type
+        }).id
 
 
-        const newMessage = Object.assign($message.message, { content: classement })
-        return Object.assign($message, { message: newMessage })
+        var options = {
+            method: 'GET',
+            url: 'http://api.football-data.org/v1/competitions/' + idLeague + '/leagueTable',
+            headers: { 'X-Auth-Token': token }
+        }
 
+        request(options, function(error, response, body) {
+            if (error) {
+                const newMessage = Object.assign($message.message, { content: "J'ai eu un problème quand j'ai voulu récupéré les résultats ..." })
+                resolve(Object.assign($message, { message: newMessage }))
+            }
+
+            let jsonData = JSON.parse(body)
+            let classement = 'Voici le classement de ' + jsonData.leagueCaption + ' :  \n\n'
+            classement += jsonData.standing.reduce(function(tab, value) {
+                return tab + value.position + ' : ' + value.teamName + '   ' + value.points + '\n'
+            }, ' ')
+
+            console.log(classement)
+
+            const newMessage = Object.assign($message.message, { content: classement })
+            resolve(Object.assign($message, { message: newMessage }))
+        })
     })
 }
