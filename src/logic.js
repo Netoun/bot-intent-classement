@@ -6,7 +6,7 @@ export const logic = ($message) => {
 
         const token = process.env.FOOT_TOKEN
 
-        if (!token || !$message.luis.entities[0] || !$message.luis.entities[0].type) {
+        if (!token || $message.luis.entities.lenght === 0 && !$message.luis.entities[0].type) {
             const newMessage = Object.assign($message.message, { content: 'Je n\'ai pas réussi à trouver votre championnat' })
             resolve(Object.assign($message, { message: newMessage }))
 
